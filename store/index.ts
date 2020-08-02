@@ -17,7 +17,6 @@ export enum MUTATIONS {
   SET_CATEGORIES = 'SET_CATEGORIES',
 }
 
-// eslint-disable-next-line require-await
 const loadCategories = async (store: Store): Promise<Category[]> => {
   if (store.categories.length) {
     return store.categories
@@ -31,10 +30,6 @@ const loadCategories = async (store: Store): Promise<Category[]> => {
 
 export interface RootState {
   categories: Category[]
-}
-
-export const state: RootState = {
-  categories: [] as Category[],
 }
 
 @Module
