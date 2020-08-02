@@ -47,7 +47,9 @@ export default class CategoryMenu extends Vue {
         ACTIONS.FIND_CATEGORY_BY_PATH,
         this.$props.path
       )
-      parentId = category.category_id
+      if (category !== null) {
+        parentId = category.category_id
+      }
     }
     if (this.$props.parentId) {
       parentId = this.$props.parentId

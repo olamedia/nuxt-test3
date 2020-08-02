@@ -66,16 +66,15 @@ export default class Store extends VuexModule implements RootState {
     }
 
     return loadCategories(this).then((categories) => {
-      return categories.filter(filterByPath).reduce(
-        (result, currentValue) => {
-          return result.url.length < currentValue.url.length
-            ? currentValue
-            : result
-        },
-        {
-          url: '',
-        } as Category
-      )
+      const matchedCategories = categories.filter(filterByPath)
+      if (matchedCategories.length === 0) {
+        return null
+      }
+      return matchedCategories.reduce(((result, currentValue) => {
+        return result.url.length < currentValue.url.length
+          ? currentValue
+          : result
+      }) as (result: Category, currentValue: Category) => Category)
     })
   }
 
