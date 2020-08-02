@@ -1,7 +1,6 @@
 import { Action, Module, Mutation, VuexModule } from 'vuex-module-decorators'
 import axios from 'axios'
 import { Category } from '~/types/Category'
-import { ActionContext } from '~/node_modules/vuex'
 
 const api = axios.create({
   baseURL: '/api',
@@ -56,24 +55,25 @@ export default class Store extends VuexModule implements RootState {
     return loadCategories(this).then((categories) => {
       return categories.filter(filterById)[0]
     })
-
   }
+
   @Action
   async [ACTIONS.FIND_CATEGORY_BY_PATH](path: string) {
     const filterByPath: (category: Category) => boolean = (category) => {
       return (
         category.url === path ||
-        path.substr(0, category.url.length) === category.url
+        path.concat('/').substr(0, category.url.length + 1) ===
+          category.url.concat('/')
       )
     }
 
     return loadCategories(this).then((categories) => {
-      // this.context.commit(MUTATIONS.SET_CATEGORIES, categories)
       return categories.filter(filterByPath).sort((a, b) => {
         return a.url.length < b.url.length ? 1 : -1
       })[0]
     })
   }
+
   @Action
   async [ACTIONS.GET_CHILD_CATEGORIES](parentId: number | null) {
     const filterByParentId: (category: Category) => boolean = (category) => {
@@ -81,7 +81,6 @@ export default class Store extends VuexModule implements RootState {
     }
 
     return loadCategories(this).then((categories) => {
-      // this.context.commit(MUTATIONS.SET_CATEGORIES, categories)
       return categories.filter(filterByParentId)
     })
   }
