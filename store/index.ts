@@ -48,12 +48,10 @@ export default class Store extends VuexModule implements RootState {
 
   @Action
   async [ACTIONS.FIND_CATEGORY_BY_ID](id: number) {
-    const filterById: (category: Category) => boolean = (category) => {
-      return category.category_id === id
-    }
-
     return loadCategories(this).then((categories) => {
-      return categories.filter(filterById)[0]
+      return categories.find((category) => {
+        return category.category_id === id
+      })
     })
   }
 
@@ -68,9 +66,16 @@ export default class Store extends VuexModule implements RootState {
     }
 
     return loadCategories(this).then((categories) => {
-      return categories.filter(filterByPath).sort((a, b) => {
-        return a.url.length < b.url.length ? 1 : -1
-      })[0]
+      return categories.filter(filterByPath).reduce(
+        (result, currentValue) => {
+          return result.url.length < currentValue.url.length
+            ? currentValue
+            : result
+        },
+        {
+          url: '',
+        } as Category
+      )
     })
   }
 
@@ -81,7 +86,9 @@ export default class Store extends VuexModule implements RootState {
     }
 
     return loadCategories(this).then((categories) => {
-      return categories.filter(filterByParentId)
+      return categories.filter(filterByParentId).sort(function (a, b) {
+        return a.name.localeCompare(b.name, 'ru-RU')
+      })
     })
   }
 }
